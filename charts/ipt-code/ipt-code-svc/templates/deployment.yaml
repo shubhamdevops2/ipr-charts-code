@@ -5,7 +5,7 @@ metadata:
   namespace: "{{ .Values.NAMESPACE }}"
   labels:
     environment: "{{ .Values.NAMESPACE }}"
-    app: frontend
+    app: "{{ .Values.label_for_node }}"
 spec:
   replicas: {{ .Values.K8S_REPLICAS }}
   strategy: 
@@ -15,11 +15,11 @@ spec:
       maxSurge: {{ .Values.K8S_MAX_SURGE }}
   selector:
     matchLabels:
-      app: frontend
+      app: "{{ .Values.label_for_node }}"
   template:
     metadata:
       labels:
-        app: frontend
+        app: "{{ .Values.label_for_node }}"
     spec:
       restartPolicy: Always
       nodeSelector:
@@ -48,9 +48,9 @@ spec:
             memory: {{ .Values.K8S_LIMIT_MEM }}
             cpu: {{ .Values.K8S_LIMIT_CPU }}
         volumeMounts:
-        - mountPath: "/var/www/html"
+        - mountPath: "{{ .Values.mountPathForPVC }}"
           name: properties-volume
         ports:
-        - containerPort: 8080
+        - containerPort: "{{ .Values.services.ports.port }}"
           name: https
           protocol: TCP
